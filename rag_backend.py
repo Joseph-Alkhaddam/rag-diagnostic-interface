@@ -10,7 +10,47 @@ RAG backend
 from openai import OpenAI
 from pinecone import Pinecone
 
-index_name = ""
+# --- THE CONFIGURATION REGISTRY ---
+# This maps an index name to its specific AI personality and parameters
+INDEX_CONFIGS = {
+    "production-manual-data": {
+        "system_prompt": """
+        You are a strict engineering guide for the Vancouver Design Manual. Cite pages.
+        Your job is to help users find information and implement it ONLY using the context provided below.
+        Always cite the page number when providing a fact.
+        "If the user's query is too vague to search the context, do NOT answer. Instead, ask them a clarifying question.
+        If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time."
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.0,
+        "top_k": 3
+    },
+    "hr-policy-data": {
+        "system_prompt": """
+        You are an empathetic HR assistant. Help employees understand their benefits.
+        Your job is to help users find information and implement it ONLY using the context provided below.
+        Always cite the page number when providing a fact.
+        "If the user's query is too vague to search the context, do NOT answer. Instead, ask them a clarifying question.
+        If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time."
+        """,
+        "model": "gpt-4o",  # Maybe this one needs the smarter model
+        "temperature": 0.3,
+        "top_k": 5
+    },
+    # The ultimate fallback if they select an index we haven't mapped yet
+    "default": {
+        "system_prompt": """You are a helpful AI assistant. Answer questions based on the provided context.
+        Your job is to help users find information and implement it ONLY using the context provided below.
+        Always cite the page number when providing a fact.
+        "If the user's query is too vague to search the context, do NOT answer. Instead, ask them a clarifying question.
+        If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time."
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "top_k": 3
+    }
+}
+
 
 def run_rag_pipeline(user_query, openai_api_key, pinecone_api_key, index_name: str):
     
@@ -18,6 +58,7 @@ def run_rag_pipeline(user_query, openai_api_key, pinecone_api_key, index_name: s
     ai_client = OpenAI(api_key=openai_api_key)
     pc_client = Pinecone(api_key=pinecone_api_key)
     index = pc_client.Index(index_name)
+    config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
     
     # 1. Embed the query (Extracting the actual math array!)
     embedding_response = ai_client.embeddings.create(
@@ -29,7 +70,7 @@ def run_rag_pipeline(user_query, openai_api_key, pinecone_api_key, index_name: s
     # 2. Search Pinecone for context (Widened to top 3 results)
     vector_results = index.query(
         vector=query_vector,
-        top_k=3,
+        top_k=config["top_k"],
         include_metadata=True
     )
     
@@ -46,10 +87,7 @@ def run_rag_pipeline(user_query, openai_api_key, pinecone_api_key, index_name: s
     
     # 4. Construct the System Prompt with the compiled context
     system_rules = f"""
-    You are a guide, helper, and search assistant for workers referring to the Vancouver Engineering Design Manual.
-    Your job is to help users find information and implement it ONLY using the context provided below.
-    Always cite the page number when providing a fact.
-    If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time, let me patch you to a human assistant."
+    {config["system_prompt"]}
     
     CONTEXT PROVIDED: 
     {compiled_context}
@@ -57,12 +95,12 @@ def run_rag_pipeline(user_query, openai_api_key, pinecone_api_key, index_name: s
     
     # 5. Generate the final answer (Fixed the model name typo)
     chat_response = ai_client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=config["model"],
         messages=[
             {"role": "system", "content": system_rules},
             {"role": "user", "content": user_query}
         ],
-        temperature=0.0
+        temperature=config["temperature"]
     )
     
     # Extract the final string (Fixed the extraction path)

@@ -10,7 +10,8 @@ RAG frontend
 import streamlit as st
 import os
 from dotenv import load_dotenv
-from rag_backend import run_rag_pipeline, index_name # Your custom RAG function
+from pinecone import Pinecone
+from rag_backend import run_rag_pipeline # Your custom RAG function
 
 # --- SECURITY HANDLER ---
 def get_credentials():
@@ -31,6 +32,28 @@ def get_credentials():
     return os.getenv("OPENAI_API_KEY"), os.getenv("PINECONE_API_KEY")
 
 openai_api_key, pinecone_api_key = get_credentials()
+
+
+@st.cache_data
+def get_available_indexes(pc_key):
+    try:
+        pc = Pinecone(api_key=pc_key)
+        # Returns a list of strings (e.g., ['production-manual-data', 'client-b-data'])
+        return [index.name for index in pc.list_indexes()]
+    except Exception as e:
+        print(type(e))
+        return ["production-manual-data"] # Fallback if API fails
+
+
+available_indexes = get_available_indexes(pinecone_api_key)
+
+
+# Add a sleek sidebar for the user to select the "Brain"
+with st.sidebar:
+    st.header("⚙️ Platform Settings")
+    index_name = st.selectbox("Select Knowledge Base:", available_indexes)
+    st.caption(f"Currently querying: **{index_name}**")
+
 
 st.title("Working helper")
 st.subheader("Ask anything about the relevant documents")
