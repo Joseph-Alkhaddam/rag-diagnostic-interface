@@ -1,0 +1,7 @@
+.env 
+.streamlit/secrets.toml 
+.streamlit/secrets.toml.txt 
+secrets.toml 
+rag_env/ 
+__pycache__/ 
+*.pyc 
