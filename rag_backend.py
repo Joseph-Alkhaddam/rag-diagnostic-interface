@@ -15,23 +15,21 @@ from pinecone import Pinecone
 INDEX_CONFIGS = {
     "production-manual-data": {
         "system_prompt": """
-        You are a strict engineering guide for the Vancouver Design Manual. Cite pages.
-        Your job is to help users find information and implement it ONLY using the context provided below.
-        Always cite the page number when providing a fact.
-        "If the user's query is too vague to search the context, do NOT answer. Instead, ask them a clarifying question.
-        If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time."
+        You are an expert engineering assistant for the Vancouver Design Manual. 
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers.
         """,
         "model": "gpt-4o-mini",
-        "temperature": 0.0,
-        "top_k": 3
+        "temperature": 0.1,
+        "top_k": 5
     },
     "hr-policy-data": {
         "system_prompt": """
         You are an empathetic HR assistant. Help employees understand their benefits.
-        Your job is to help users find information and implement it ONLY using the context provided below.
-        Always cite the page number when providing a fact.
-        "If the user's query is too vague to search the context, do NOT answer. Instead, ask them a clarifying question.
-        If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time."
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers."
         """,
         "model": "gpt-4o",  # Maybe this one needs the smarter model
         "temperature": 0.3,
@@ -40,10 +38,9 @@ INDEX_CONFIGS = {
     # The ultimate fallback if they select an index we haven't mapped yet
     "default": {
         "system_prompt": """You are a helpful AI assistant. Answer questions based on the provided context.
-        Your job is to help users find information and implement it ONLY using the context provided below.
-        Always cite the page number when providing a fact.
-        "If the user's query is too vague to search the context, do NOT answer. Instead, ask them a clarifying question.
-        If the answer is not contained in the context below, respond EXACTLY with: "I'm not sure at this time."
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers."
         """,
         "model": "gpt-4o-mini",
         "temperature": 0.1,
