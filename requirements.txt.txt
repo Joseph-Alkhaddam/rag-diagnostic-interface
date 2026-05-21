@@ -1,4 +1,0 @@
-streamlit
-openai
-pinecone-client
-python-dotenv
