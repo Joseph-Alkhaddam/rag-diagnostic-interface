@@ -61,6 +61,10 @@ st.subheader("Ask anything about the relevant documents")
 # 1. The RAM Initialization
 if "messages" not in st.session_state:
     st.session_state.messages = []
+    
+# Initialize a memory slot for button clicks
+if "button_query" not in st.session_state:
+    st.session_state.button_query = None
 
 # 2. The Screen Refresh
 for message in st.session_state.messages:
@@ -70,9 +74,6 @@ for message in st.session_state.messages:
 # 1. Fetch the specific configuration for whatever index the user selected in the sidebar
 current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
 questions_list = current_config.get("magic_questions", [])
-
-# 2. Setup a variable to catch a button click
-magic_query = None
 
 # 3. Dynamically generate the buttons ONLY if questions exist
 if questions_list:
@@ -84,33 +85,32 @@ if questions_list:
     # Loop through the questions and place each one in its own column
     for index, question in enumerate(questions_list):
         with cols[index]:
-            if st.button(question):
-                magic_query = question
+            if st.button(question, key=f"magic_btn_{index}"):
+                st.session_state.button_query = question
 
 # 4. The standard text input
 user_input = st.chat_input("Or type your own specific question here...")
 
 # 5. THE LOGIC GATE: Use the typed input, or the button input if clicked
-final_query = user_input or magic_query
+final_query = user_input or st.session_state.button_query
 
 # 6. Fire the engine
 if final_query:
-    # 3. The Input Valve (Using the Walrus Operator :=)
-    if user_input := st.chat_input("Enter your query here..."):
+    st.session_state.button_query = None
+    
+    st.session_state.messages.append({"role": "user", "content": final_query})
+    with st.chat_message("user"):
+        st.write(final_query)
         
-        # 4. Record User Input
-        with st.chat_message("user"):
-            st.markdown(user_input)
-        st.session_state.messages.append({"role": "user", "content": user_input})
-    
-        # 5. Fire the Engine
-        with st.spinner("Querying Vector Database..."):
-            ai_response = run_rag_pipeline(user_input, openai_api_key, pinecone_api_key, index_name)
-    
-        # 6. Record AI Output
-        with st.chat_message("assistant"):
-            st.markdown(ai_response)
-        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+    # Fetch AI response
+    with st.chat_message("assistant"):
+        with st.spinner("Searching company documents..."):
+            
+            response = run_rag_pipeline(final_query, openai_api_key, pinecone_api_key, index_name)
+            
+            st.write(response)
+            # Save AI response to history
+            st.session_state.messages.append({"role": "assistant", "content": response})
 
     
     
