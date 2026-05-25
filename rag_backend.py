@@ -22,18 +22,12 @@ INDEX_CONFIGS = {
         """,
         "model": "gpt-4o-mini",
         "temperature": 0.1,
-        "top_k": 5
-    },
-    "hr-policy-data": {
-        "system_prompt": """
-        You are an empathetic HR assistant. Help employees understand their benefits.
-        Answer the user's question using the provided context. If the exact answer is missing, 
-        summarize what the context DOES say about the topic to try and help them. 
-        Always cite page numbers."
-        """,
-        "model": "gpt-4o",  # Maybe this one needs the smarter model
-        "temperature": 0.3,
-        "top_k": 5
+        "top_k": 5,
+        "magic questions": 
+            ["What is the minimum required depth of cover for water mains?",
+             "What is the maximum allowable spacing between sanitary manholes?",
+             "What are the standard pavement width requirements for local residential streets?"
+            ]
     },
     # The ultimate fallback if they select an index we haven't mapped yet
     "default": {

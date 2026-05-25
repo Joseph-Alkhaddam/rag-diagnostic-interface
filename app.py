@@ -11,7 +11,7 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 from pinecone import Pinecone
-from rag_backend import run_rag_pipeline # Your custom RAG function
+from rag_backend import run_rag_pipeline, INDEX_CONFIGS # Your custom RAG function
 
 # --- SECURITY HANDLER ---
 def get_credentials():
@@ -67,22 +67,51 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 3. The Input Valve (Using the Walrus Operator :=)
-if user_input := st.chat_input("Enter your query here..."):
+# 1. Fetch the specific configuration for whatever index the user selected in the sidebar
+current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
+questions_list = current_config.get("magic_questions", [])
+
+# 2. Setup a variable to catch a button click
+magic_query = None
+
+# 3. Dynamically generate the buttons ONLY if questions exist
+if questions_list:
+    st.markdown("💡 **Try one of the examples below:**")
     
-    # 4. Record User Input
-    with st.chat_message("user"):
-        st.markdown(user_input)
-    st.session_state.messages.append({"role": "user", "content": user_input})
+    # Create the exact number of columns needed
+    cols = st.columns(len(questions_list))
+    
+    # Loop through the questions and place each one in its own column
+    for index, question in enumerate(questions_list):
+        with cols[index]:
+            if st.button(question):
+                magic_query = question
 
-    # 5. Fire the Engine
-    with st.spinner("Querying Vector Database..."):
-        ai_response = run_rag_pipeline(user_input, openai_api_key, pinecone_api_key, index_name)
+# 4. The standard text input
+user_input = st.chat_input("Or type your own specific question here...")
 
-    # 6. Record AI Output
-    with st.chat_message("assistant"):
-        st.markdown(ai_response)
-    st.session_state.messages.append({"role": "assistant", "content": ai_response})
+# 5. THE LOGIC GATE: Use the typed input, or the button input if clicked
+final_query = user_input or magic_query
+
+# 6. Fire the engine
+if final_query:
+    # 3. The Input Valve (Using the Walrus Operator :=)
+    if user_input := st.chat_input("Enter your query here..."):
+        
+        # 4. Record User Input
+        with st.chat_message("user"):
+            st.markdown(user_input)
+        st.session_state.messages.append({"role": "user", "content": user_input})
+    
+        # 5. Fire the Engine
+        with st.spinner("Querying Vector Database..."):
+            ai_response = run_rag_pipeline(user_input, openai_api_key, pinecone_api_key, index_name)
+    
+        # 6. Record AI Output
+        with st.chat_message("assistant"):
+            st.markdown(ai_response)
+        st.session_state.messages.append({"role": "assistant", "content": ai_response})
+
     
     
 # """

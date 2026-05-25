@@ -4,7 +4,7 @@ Created on Fri May 15 10:45:25 2026
 
 @author: fowak
 
-File converter
+File converter to PDF
 """
 
 import os
