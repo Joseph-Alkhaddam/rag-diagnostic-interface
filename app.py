@@ -48,10 +48,24 @@ def get_available_indexes(pc_key):
 available_indexes = get_available_indexes(pinecone_api_key)
 
 
-# Add a sleek sidebar for the user to select the "Brain"
+# --- THE MAGIC LINK ROUTER ---
+# 1. Look at the web URL and see if a specific index was passed in
+query_params = st.query_params
+target_index = query_params.get("index", None)
+
+# 2. Find where that index lives in your dropdown list (default to 0 if not found)
+default_dropdown_position = 0
+if target_index in available_indexes:
+    default_dropdown_position = available_indexes.index(target_index)
+
+# 3. Draw the sidebar and force the pre-selection
 with st.sidebar:
     st.header("⚙️ Platform Settings")
-    index_name = st.selectbox("Select Knowledge Base:", available_indexes)
+    index_name = st.selectbox(
+        "Select Knowledge Base:", 
+        available_indexes,
+        index=default_dropdown_position  # <--- THE MAGIC HAPPENS HERE
+    )
     st.caption(f"Currently querying: **{index_name}**")
 
 
