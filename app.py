@@ -75,8 +75,8 @@ for message in st.session_state.messages:
 current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
 questions_list = current_config.get("magic_questions", [])
 
-st.error(f"X-Ray 1 - Exact Index Name: '{index_name}'")
-st.error(f"X-Ray 2 - Questions Loaded: {questions_list}")
+# st.error(f"X-Ray 1 - Exact Index Name: '{index_name}'")
+# st.error(f"X-Ray 2 - Questions Loaded: {questions_list}")
 
 # 3. Dynamically generate the buttons ONLY if questions exist
 if questions_list and len(st.session_state.messages) == 0:
