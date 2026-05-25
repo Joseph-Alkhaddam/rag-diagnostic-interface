@@ -23,7 +23,7 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "magic questions": 
+        "magic_questions": 
             ["What is the minimum required depth of cover for water mains?",
              "What is the maximum allowable spacing between sanitary manholes?",
              "What are the standard pavement width requirements for local residential streets?"
