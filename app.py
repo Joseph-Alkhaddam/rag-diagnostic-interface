@@ -74,8 +74,8 @@ index_title = INDEX_CONFIGS.get("index_title", "")
 index_subheader = INDEX_CONFIGS.get("index_subheader", "")
 questions_list = current_config.get("magic_questions", [])
 
-st.title("Working helper")
-st.subheader("Ask anything about the relevant documents")
+st.title(index_title)
+st.subheader(index_subheader)
 
 # 1. The RAM Initialization
 if "messages" not in st.session_state:
