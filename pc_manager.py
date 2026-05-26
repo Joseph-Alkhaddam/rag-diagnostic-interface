@@ -43,9 +43,13 @@ def create_index(index_name: str):
             vector_type=VectorType.DENSE,
             deletion_protection=DeletionProtection.ENABLED
             )
+    new_index = pc_client.Index(index_name)
+    if new_index:
+        print("Successfully created new index")
+    
     
 
-new_index_name = ""
+new_index_name = "alexs-university-psych-notes"
 
 create_index(new_index_name)
    

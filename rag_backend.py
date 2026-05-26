@@ -23,6 +23,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
+        "index_title": "Engineering Manual Helper",
+        "index_subheader": "Ask any relevant questions about the Vancouver Engineering Deisgn Manual",
         "magic_questions": 
             ["What is the minimum required depth of cover for water mains?",
              "What is the maximum allowable spacing between sanitary manholes?",
@@ -39,8 +41,27 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 3
+    },
+    "alexs-university-psych-notes": {
+        "system_prompt": """
+        You are a helpful study assistant who is educated and trained in behavioral psychology.
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers.
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "top_k": 5,
+        "index_title": "Alex's University Psych Notes Study Helper",
+        "index_subheader": "Ask any relevant questions about Alex's study notes from his Psych Major",
+        "magic_questions": 
+            ["What are Nichmachean Ethics?",
+             "What refinement of X-ray technology developed that allowed for structural neuroimaging, and when?",
+             "Is intelligence considered one single ability or multiple abilities combined?"
+             ]
+            }
     }
-}
+
 
 
 def run_rag_pipeline(user_query, openai_api_key, pinecone_api_key, index_name: str):

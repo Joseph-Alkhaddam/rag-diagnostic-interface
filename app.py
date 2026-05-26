@@ -68,6 +68,11 @@ with st.sidebar:
     )
     st.caption(f"Currently querying: **{index_name}**")
 
+#1. Fetch the specific configuration for whatever index the user selected in the sidebar
+current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
+index_title = INDEX_CONFIGS.get("index_title", "")
+index_subheader = INDEX_CONFIGS.get("index_subheader", "")
+questions_list = current_config.get("magic_questions", [])
 
 st.title("Working helper")
 st.subheader("Ask anything about the relevant documents")
@@ -85,9 +90,6 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 1. Fetch the specific configuration for whatever index the user selected in the sidebar
-current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
-questions_list = current_config.get("magic_questions", [])
 
 # st.error(f"X-Ray 1 - Exact Index Name: '{index_name}'")
 # st.error(f"X-Ray 2 - Questions Loaded: {questions_list}")

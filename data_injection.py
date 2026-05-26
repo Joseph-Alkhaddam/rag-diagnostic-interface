@@ -11,7 +11,7 @@ from text_splitter import semantic_chunker
 from vector_embedding import embedding_and_upsert
 
 
-file_path = r""
+file_path = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\RAG app\Injection Data\Alex's Notes\Alex's Notes.pdf"
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
         return
         
     smart_chunks = semantic_chunker(file_path)
-    embedding_and_upsert(smart_chunks)
+    embedding_and_upsert(smart_chunks, "alexs-university-psych-notes")
     
 if __name__ == "__main__":
     main()

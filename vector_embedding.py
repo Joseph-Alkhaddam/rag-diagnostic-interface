@@ -13,11 +13,11 @@ from pinecone import Pinecone
 from dotenv import load_dotenv
 
 
-def embedding_and_upsert(smart_chunks: list):
+def embedding_and_upsert(smart_chunks: list, index_name: str):
     load_dotenv()
     ai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     pc_client = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-    production_index = pc_client.Index("shaban-case")
+    production_index = pc_client.Index(index_name)
     
     print("[SYSTEM] Running data sanitization filter...")
     # This rebuilds the list, keeping ONLY chunks that have actual letters/numbers after stripping out blank spaces
