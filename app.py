@@ -123,7 +123,7 @@ if final_query:
         
     # Fetch AI response
     with st.chat_message("assistant"):
-        with st.spinner("Searching company documents..."):
+        with st.spinner("Searching through relevant documents..."):
             
             response = run_rag_pipeline(final_query, openai_api_key, pinecone_api_key, index_name)
             
