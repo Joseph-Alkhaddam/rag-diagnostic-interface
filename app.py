@@ -132,7 +132,6 @@ if final_query:
             st.session_state.messages.append({"role": "assistant", "content": response})
 
     
-    
 # """
 # ***** 
 # Use: (streamlit run app.py) 

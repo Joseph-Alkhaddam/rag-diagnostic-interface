@@ -59,8 +59,64 @@ INDEX_CONFIGS = {
              "What refinement of X-ray technology developed that allowed for structural neuroimaging, and when?",
              "Is intelligence considered one single ability or multiple abilities combined?"
              ]
-            }
+    },
+    "2023-kia-forte-data": {
+        "system_prompt": """
+        You are a helpful technical assistant who is well versed on the 2023 KIA Forte's Owner's manual, Infotainment
+        Reference Guide, and the Warranty Information.
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers.
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "top_k": 5,
+        "index_title": "2023 KIA Forte Personal Assistane",
+        "index_subheader": """Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and 
+        the Warranty Information.""",
+        "magic_questions": 
+            ["How often should I service my breaks during harsh weather conditions?",
+             "Can I have presets for playing certain audio? If so, how do I do that?",
+             "If my car is damaged by natural debris, do I qualify for coverage?"
+             ]
+    },
+    "lg-washing-machine-data": {
+        "system_prompt": """
+        You are a helpful technical assistant who is perfectly versed on the LG WM6998*A Washing Machine Owner's Manual.
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers.
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "top_k": 5,
+        "index_title": "LG WM6998*A Washing Machine Peronsal Assitant",
+        "index_subheader": """Ask any questions relevant to the Owner's Manual.""",
+        "magic_questions": 
+            ["How do I clean the rubber gasket for the door?",
+             "How do I make the machine use more detergent for a stronger smell?",
+             "How can I ensure a strong and clean wash in under 2 hours?"
+             ]
+    },
+    "lg-stove-data": {
+        "system_prompt": """
+        You are a helpful technical assistant who is perfectly versed on the LG LREN6325 Stove Owner's Manual.
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers.
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "top_k": 5,
+        "index_title": "LG LREN6325 Stove Peronsal Assitant",
+        "index_subheader": """Ask any questions relevant to the Owner's Manual.""",
+        "magic_questions": 
+            ["What's the safest way to clean the stove top from oil stains?",
+             "Do I need a lot of oil when using the air frying function?",
+             "Can you tell me a good way to cook certain foods?"
+             ]
     }
+}
 
 
 

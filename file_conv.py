@@ -65,8 +65,8 @@ def unified_document_pipeline(folder_path: str, final_output_name: str):
     print(f"\n[PIPELINE SUCCESS] Master document compiled as: {final_output_name}")
 
 # --- EXECUTION ---
-target_folder = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\RAG app\Injection Data\Alex's Notes\Doc Data"
-output_file = "Alex's Notes.pdf"  
+target_folder = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\RAG app\Injection Data\KIA Manuals"
+output_file = "2023 Kia Forte Manual Data.pdf"  
 
 unified_document_pipeline(target_folder, output_file)
     

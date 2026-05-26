@@ -43,13 +43,11 @@ def create_index(index_name: str):
             vector_type=VectorType.DENSE,
             deletion_protection=DeletionProtection.ENABLED
             )
-    new_index = pc_client.Index(index_name)
-    if new_index:
+    if pc_client.has_index(index_name):
         print("Successfully created new index")
     
     
-
-new_index_name = "alexs-university-psych-notes"
+new_index_name = "2023-kia-forte-data"
 
 create_index(new_index_name)
    
