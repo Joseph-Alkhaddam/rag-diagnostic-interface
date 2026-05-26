@@ -11,7 +11,7 @@ from text_splitter import semantic_chunker
 from vector_embedding import embedding_and_upsert
 
 
-file_path = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\RAG app\Injection Data\LG Manuals\LG WM6998HA Owner's Manual.pdf"
+file_path = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\Injection Data\Car Manuals\2009 Infinit G37x Coupe\Owner's Manual.pdf"
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
         return
         
     smart_chunks = semantic_chunker(file_path)
-    embedding_and_upsert(smart_chunks, "lg-washing-machine-data")
+    embedding_and_upsert(smart_chunks, "2009-infinit-g37x-data")
     
 if __name__ == "__main__":
     main()

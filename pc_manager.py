@@ -47,7 +47,7 @@ def create_index(index_name: str):
         print("Successfully created new index")
     
     
-new_index_name = "2023-kia-forte-data"
+new_index_name = "2009-infinit-g37x-data"
 
 create_index(new_index_name)
    

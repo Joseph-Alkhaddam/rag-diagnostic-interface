@@ -13,25 +13,6 @@ from pinecone import Pinecone
 # --- THE CONFIGURATION REGISTRY ---
 # This maps an index name to its specific AI personality and parameters
 INDEX_CONFIGS = {
-    "production-manual-data": {
-        "system_prompt": """
-        You are an expert engineering assistant for the Vancouver Design Manual. 
-        Answer the user's question using the provided context. If the exact answer is missing, 
-        summarize what the context DOES say about the topic to try and help them. 
-        Always cite page numbers.
-        """,
-        "model": "gpt-4o-mini",
-        "temperature": 0.1,
-        "top_k": 5,
-        "index_title": "Engineering Manual Helper",
-        "index_subheader": "Ask any relevant questions about the Vancouver Engineering Deisgn Manual",
-        "magic_questions": 
-            ["What is the minimum required depth of cover for water mains?",
-             "What is the maximum allowable spacing between sanitary manholes?",
-             "What are the standard pavement width requirements for local residential streets?"
-            ]
-    },
-    # The ultimate fallback if they select an index we haven't mapped yet
     "default": {
         "system_prompt": """You are a helpful AI assistant. Answer questions based on the provided context.
         Answer the user's question using the provided context. If the exact answer is missing, 
@@ -114,6 +95,26 @@ INDEX_CONFIGS = {
             ["What's the safest way to clean the stove top from oil stains?",
              "Do I need a lot of oil when using the air frying function?",
              "Can you tell me a good way to cook certain foods?"
+             ]
+    },
+    "2009-infinit-g37x-data": {
+        "system_prompt": """
+        You are a helpful technical assistant who is well versed on the 2009 Infinit G37x Owner's manual, Infotainment
+        Reference Guide, and the Warranty Information.
+        Answer the user's question using the provided context. If the exact answer is missing, 
+        summarize what the context DOES say about the topic to try and help them. 
+        Always cite page numbers.
+        """,
+        "model": "gpt-4o-mini",
+        "temperature": 0.1,
+        "top_k": 5,
+        "index_title": "2009 Infinit G37x Personal Assistane",
+        "index_subheader": """Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and 
+        the Warranty Information.""",
+        "magic_questions": 
+            ["What is the recommended engine oil viscosity and capacity?",
+             "What does it mean if the AWD warning light flashes rapidly on the dashboard?",
+             "How do I program the HomeLink Universal Transceiver for my garage door?"
              ]
     }
 }
