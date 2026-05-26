@@ -42,7 +42,7 @@ def get_available_indexes(pc_key):
         return [index.name for index in pc.list_indexes()]
     except Exception as e:
         print(type(e))
-        return ["production-manual-data"] # Fallback if API fails
+        return ["2023-kia-forte-data"] # Fallback if API fails
 
 
 available_indexes = get_available_indexes(pinecone_api_key)

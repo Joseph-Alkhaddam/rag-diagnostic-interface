@@ -52,9 +52,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "index_title": "2023 KIA Forte Personal Assistane",
-        "index_subheader": """Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and 
-        the Warranty Information.""",
+        "index_title": "2023 KIA Forte Personal Assistant",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and the Warranty Information.",
         "magic_questions": 
             ["How often should I service my breaks during harsh weather conditions?",
              "Can I have presets for playing certain audio? If so, how do I do that?",
@@ -72,7 +71,7 @@ INDEX_CONFIGS = {
         "temperature": 0.1,
         "top_k": 5,
         "index_title": "LG WM6998*A Washing Machine Peronsal Assitant",
-        "index_subheader": """Ask any questions relevant to the Owner's Manual.""",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual.",
         "magic_questions": 
             ["How do I clean the rubber gasket for the door?",
              "How do I make the machine use more detergent for a stronger smell?",
@@ -90,7 +89,7 @@ INDEX_CONFIGS = {
         "temperature": 0.1,
         "top_k": 5,
         "index_title": "LG LREN6325 Stove Peronsal Assitant",
-        "index_subheader": """Ask any questions relevant to the Owner's Manual.""",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual.",
         "magic_questions": 
             ["What's the safest way to clean the stove top from oil stains?",
              "Do I need a lot of oil when using the air frying function?",
@@ -109,8 +108,7 @@ INDEX_CONFIGS = {
         "temperature": 0.1,
         "top_k": 5,
         "index_title": "2009 Infinit G37x Personal Assistane",
-        "index_subheader": """Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and 
-        the Warranty Information.""",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and the Warranty Information.",
         "magic_questions": 
             ["What is the recommended engine oil viscosity and capacity?",
              "What does it mean if the AWD warning light flashes rapidly on the dashboard?",
