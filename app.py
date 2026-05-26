@@ -70,8 +70,8 @@ with st.sidebar:
 
 #1. Fetch the specific configuration for whatever index the user selected in the sidebar
 current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
-index_title = INDEX_CONFIGS.get("index_title")
-index_subheader = INDEX_CONFIGS.get("index_subheader")
+index_title = current_config.get("index_title")
+index_subheader = current_config.get("index_subheader")
 questions_list = current_config.get("magic_questions", [])
 
 st.title(index_title)
