@@ -8,19 +8,22 @@ Data Injection
 """
 
 from text_splitter import semantic_chunker
-from vector_embedding import embedding_and_upsert
+from vector_embedding import embedding_and_upsert, sanitize_document_chunks
 
 
-file_path = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\Injection Data\Car Manuals\2009 Infinit G37x Coupe\Owner's Manual.pdf"
+file_path = r""
+index_name = ""
 
 
 def main():
+    """Data injection execution loop."""
     if not file_path:
         print("[CRITICAL] No file path provided. Aborting injection.")
         return
         
     smart_chunks = semantic_chunker(file_path)
-    embedding_and_upsert(smart_chunks, "2009-infinit-g37x-data")
+    clean_chunks = sanitize_document_chunks(smart_chunks)
+    embedding_and_upsert(clean_chunks, index_name)
     
 if __name__ == "__main__":
     main()

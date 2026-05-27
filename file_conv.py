@@ -1,72 +1,147 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri May 15 10:45:25 2026
-
 @author: fowak
 
-File converter to PDF
+Batch File Conversion & PDF Merging Utility
 """
 
 import os
 import subprocess
-import fitz
-    
-    
-def unified_document_pipeline(folder_path: str, final_output_name: str):
-    
-    # --- STAGE 1: The LibreOffice Headless Converter (Keep this exactly the same) ---
+import fitz  # PyMuPDF
+
+
+def convert_word_to_pdf(
+    folder_path: str, 
+    libreoffice_exe: str = r"C:\Program Files\LibreOffice\program\soffice.exe"
+) -> None:
+    """
+    Scans a directory for Word documents and batch converts them to PDF.
+
+    Executes a headless instance of LibreOffice via the system shell to process 
+    .doc and .docx files, outputting the resulting PDFs into the same directory.
+
+    Parameters
+    ----------
+    folder_path : str
+        The absolute or relative path to the directory containing the Word documents.
+    libreoffice_exe : str, optional
+        The absolute path to the local LibreOffice executable file.
+
+    Returns
+    -------
+    None
+    """
     print(f"\n[STAGE 1] Batch converting Word documents to PDF in: {folder_path}")
-    libreoffice_exe = r"C:\Program Files\LibreOffice\program\soffice.exe"
     
     if not os.path.exists(libreoffice_exe):
-        print("\n[CRITICAL ERROR] LibreOffice not found. Please install it to proceed.")
+        print("\n[CRITICAL ERROR] LibreOffice not found. Please verify the executable path.")
         return
 
-    all_files = os.listdir(folder_path)
+    try:
+        all_files = os.listdir(folder_path)
+    except Exception as e:
+        print(f"[ERROR] Could not read target directory: {folder_path}. Details: {e}")
+        return
+
     word_docs = [file for file in all_files if file.endswith((".doc", ".docx"))]
     
+    if not word_docs:
+        print("  -> No Word documents found. Skipping conversion.")
+        return
+
     for doc in word_docs:
         print(f"  -> Converting: {doc}")
         full_doc_path = os.path.join(folder_path, doc)
-        command = [libreoffice_exe, "--headless", "--convert-to", "pdf", "--outdir", folder_path, full_doc_path]
-        subprocess.run(command, check=True)
+        command = [
+            libreoffice_exe, 
+            "--headless", 
+            "--convert-to", 
+            "pdf", 
+            "--outdir", 
+            folder_path, 
+            full_doc_path
+        ]
         
-    print("[STAGE 1 COMPLETE] Individual PDFs generated.")
+        try:
+            subprocess.run(command, check=True, capture_output=True)
+        except subprocess.CalledProcessError as e:
+            print(f"  [ERROR] Failed to convert {doc}. Details: {e.stderr.decode()}")
+            continue
+            
+    print("[STAGE 1 COMPLETE] Document conversion cycle finished.")
 
-    # --- STAGE 2: The PyMuPDF Bulldozer ---
+
+def merge_directory_pdfs(folder_path: str, final_output_name: str) -> None:
+    """
+    Compiles all PDF files within a specified directory into a single master document.
+
+    Utilizes PyMuPDF to sequentially append the binary page data of each PDF 
+    found in the target folder into a unified output file.
+
+    Parameters
+    ----------
+    folder_path : str
+        The absolute or relative path to the directory containing the PDF files.
+    final_output_name : str
+        The designated filename or path for the compiled master PDF.
+
+    Returns
+    -------
+    None
+    """
     print("\n[STAGE 2] Sweeping folder for PDFs to merge using PyMuPDF...")
     
-    # Create an empty master PDF object
-    master_pdf = fitz.open()
+    try:
+        all_files = os.listdir(folder_path)
+    except Exception as e:
+        print(f"[ERROR] Could not read target directory: {folder_path}. Details: {e}")
+        return
 
-    all_files = os.listdir(folder_path)
     pdf_files = [file for file in all_files if file.endswith(".pdf")]
     pdf_files.sort()
 
+    if not pdf_files:
+        print("  -> No PDF files found to merge.")
+        return
+
     print(f"Found {len(pdf_files)} PDFs. Stitching together...")
+    
+    master_pdf = fitz.open()
 
     for pdf in pdf_files:
         full_path = os.path.join(folder_path, pdf)
         try:
-            # 1. Open the individual PDF
             with fitz.open(full_path) as doc:
-                # 2. Forcibly insert all pages into the master PDF
                 master_pdf.insert_pdf(doc)
             print(f"  -> Appended: {pdf}")
         except Exception as e:
-            # If PyMuPDF can't open it, the file is truly, completely dead.
-            print(f"  [CRITICAL] FAILED on {pdf}. Reason: {e}")
+            print(f"  [CRITICAL] FAILED on {pdf}. Reason: {str(e)}")
             continue
 
-    # 3. Write the final master file
-    master_pdf.save(final_output_name)
-    master_pdf.close()
-    
-    print(f"\n[PIPELINE SUCCESS] Master document compiled as: {final_output_name}")
+    try:
+        master_pdf.save(final_output_name)
+        print(f"\n[PIPELINE SUCCESS] Master document compiled as: {final_output_name}")
+    except Exception as e:
+        print(f"\n[ERROR] Could not save master PDF. Details: {str(e)}")
+    finally:
+        master_pdf.close()
 
-# --- EXECUTION ---
-target_folder = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\RAG app\Injection Data\KIA Manuals"
-output_file = "2023 Kia Forte Manual Data.pdf"  
 
-unified_document_pipeline(target_folder, output_file)
+def unified_document_pipeline(folder_path: str, final_output_name: str) -> None:
+    """
+    Orchestrates the complete document ingestion pipeline.
+    First converts any localized Word documents, then merges all resulting PDFs.
+    """
+    convert_word_to_pdf(folder_path)
+    merge_directory_pdfs(folder_path, final_output_name)
+
+
+# --- ENTRY POINT FOR STANDALONE EXECUTION ---
+if __name__ == "__main__":
+    # Define your execution parameters here so they don't clutter the logic above
+    TARGET_FOLDER = r""
+    OUTPUT_FILE = ".pdf"  
     
+    # Execute the master pipeline
+    unified_document_pipeline(TARGET_FOLDER, OUTPUT_FILE)

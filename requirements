@@ -1,0 +1,9 @@
+streamlit 
+openai
+pinecone-client
+python-dotenv
+PyMuPDF
+langchain-community
+langchain-huggingface
+langchain-experimental
+sentence-transformers

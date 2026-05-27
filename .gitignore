@@ -5,3 +5,5 @@ secrets.toml
 rag_env/ 
 __pycache__/ 
 *.pyc 
+*.json
+temp_uploads/
