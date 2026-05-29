@@ -96,23 +96,22 @@ INDEX_CONFIGS = {
              "Can you tell me a good way to cook certain foods?"
              ]
     },
-    "2009-infinit-g37x-data": {
+    "jablonsky-obc-demo": {
         "system_prompt": """
-        You are a helpful technical assistant who is well versed on the 2009 Infinit G37x Owner's manual, Infotainment
-        Reference Guide, and the Warranty Information.
+        You are a highly precise structural engineering AI assistant specializing in the Ontario Building Code (OBC).
         Answer the user's question using the provided context. If the exact answer is missing, 
-        summarize what the context DOES say about the topic to try and help them. 
-        Always cite page numbers.
+        summarize what the context DOES say about the topic to help the engineer. 
+        Always cite the exact clause, subsection, and page numbers.
         """,
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "index_title": "2009 Infinit G37x Personal Assistane",
-        "index_subheader": "Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and the Warranty Information.",
-        "magic_questions": 
-            ["What is the recommended engine oil viscosity and capacity?",
-             "What does it mean if the AWD warning light flashes rapidly on the dashboard?",
-             "How do I program the HomeLink Universal Transceiver for my garage door?"
+        "index_title": "Jablonsky & Partners OBC Assistant",
+        "index_subheader": "Query Part 4 (Structural Design) of the Ontario Building Code instantly.",
+        "magic_questions": [
+            "What are the live load reduction factors for multi-story columns and foundations?",
+            "What are the specified load combinations for Ultimate Limit States (ULS) under wind and snow?",
+            "How is the seismic importance factor (I_E) determined for high-rise residential structures?"
              ]
     }
 }
