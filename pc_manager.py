@@ -177,17 +177,19 @@ if __name__ == "__main__":
     # Uncomment the function you wish to run and execute the file.
     # ---------------------------------------------------------
     
-    TARGET_INDEX = "hvac-code-assistant"
+    TARGET_INDEX = "jablonsky-obc-demo"
     
     # 1. Inspect your infrastructure
     # list_active_indexes()
     # print_index_stats(TARGET_INDEX)
     
     # 2. Provision new infrastructure
-    # create_pinecone_index(TARGET_INDEX)
+    create_pinecone_index(TARGET_INDEX)
     
     # 3. Clean or destroy infrastructure
     # wipe_index_data(TARGET_INDEX)
     # delete_pinecone_index(TARGET_INDEX)
     
     print("\n[READY] Comment out the desired function in the execution block to run.")
+    
+    

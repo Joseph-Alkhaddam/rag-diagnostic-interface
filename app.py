@@ -55,6 +55,12 @@ def render_sidebar(available_indexes: list) -> str:
         default_dropdown_position = available_indexes.index(target_index)
 
     with st.sidebar:
+        try:
+            st.image("big_jablonsky_logo.png", use_column_width=True)
+            st.divider() # Adds a clean horizontal line under the logo
+        except Exception:
+            pass # If the logo is missing, it skips gracefully without crashing the app
+            
         st.header("⚙️ Platform Settings")
         index_name = st.selectbox(
             "Select Knowledge Base:", 

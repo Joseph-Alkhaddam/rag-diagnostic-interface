@@ -108,6 +108,7 @@ INDEX_CONFIGS = {
         "top_k": 5,
         "index_title": "Jablonsky & Partners OBC Assistant",
         "index_subheader": "Query Part 4 (Structural Design) of the Ontario Building Code instantly.",
+        "logo": "big_jablonsky_logo.png",
         "magic_questions": [
             "What are the live load reduction factors for multi-story columns and foundations?",
             "What are the specified load combinations for Ultimate Limit States (ULS) under wind and snow?",
