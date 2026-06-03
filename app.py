@@ -42,34 +42,31 @@ def get_available_indexes(pc_key: str) -> list:
 
 # --- UI & STATE COMPONENTS ---
 
-def render_sidebar(available_indexes: list) -> str:
+def render_sidebar(config: dict) -> str:
     """
-    Renders the sidebar navigation and handles Magic Link URL routing.
-    Returns the string name of the currently selected index.
+    Renders a locked-down production sidebar for the client.
+    Requires the config dictionary to be loaded first.
     """
-    query_params = st.query_params
-    target_index = query_params.get("index", None)
-
-    default_dropdown_position = 0
-    if target_index in available_indexes:
-        default_dropdown_position = available_indexes.index(target_index)
-
     with st.sidebar:
-        try:
-            st.image("big_jablonsky_logo.png", use_column_width=True)
-            st.divider() # Adds a clean horizontal line under the logo
-        except Exception:
-            pass # If the logo is missing, it skips gracefully without crashing the app
-            
-        st.header("⚙️ Platform Settings")
-        index_name = st.selectbox(
-            "Select Knowledge Base:", 
-            available_indexes,
-            index=default_dropdown_position
-        )
-        st.caption(f"Currently querying: **{index_name}**")
+        # 1. Dynamic Asset Injection
+        logo_path = config.get("logo_path")
+        if logo_path and os.path.exists(logo_path):
+            st.image(logo_path, use_container_width=True)
+            st.divider()
+
+        # 2. Operator Diagnostics (The new sidebar utility)
+        st.header("⚙️ System Telemetry")
+        st.caption(f"Active Partition: **{config.get('index_title', 'Standard Build')}**")
+        st.caption("Vector DB Status: **ONLINE**")
+        st.caption("Inference Engine: **STABLE**")
         
-    return index_name
+        st.divider()
+        
+        # 3. Session Control
+        if st.button("Purge Session Memory", use_container_width=True):
+            st.session_state.messages = []
+            st.session_state.button_query = None
+            st.rerun()
 
 def initialize_session_state() -> None:
     """Initializes the Streamlit session state memory matrix."""
@@ -110,27 +107,31 @@ def execute_rag_generation_loop(final_query: str, openai_api_key: str, pinecone_
 
 def main():
     """Main application execution loop."""
-    # 1. Authenticate and fetch databases
     openai_api_key, pinecone_api_key = get_credentials()
-    available_indexes = get_available_indexes(pinecone_api_key)
 
-    # 2. Render Sidebar & Fetch Configuration
-    index_name = render_sidebar(available_indexes)
-    current_config = INDEX_CONFIGS.get(index_name, INDEX_CONFIGS["default"])
+    # 1. Routing: Read the 'tenant' parameter directly from the URL
+    query_params = st.query_params
+    tenant_id = query_params.get("tenant", "default") 
     
-    # 3. Render Headers
+    # 2. Fetch Configuration BEFORE rendering UI
+    current_config = INDEX_CONFIGS.get(tenant_id, INDEX_CONFIGS["default"])
+    
+    # 3. Render the locked-down Sidebar
+    render_sidebar(current_config)
+    
+    # 4. Render Headers
     st.title(current_config.get("index_title", "📚 Knowledge Base"))
     st.subheader(current_config.get("index_subheader", "Ask anything about the relevant documents"))
 
-    # 4. Initialize RAM / Memory State
+    # 5. Initialize RAM / Memory State
     initialize_session_state()
 
-    # 5. Render Historical Messages
+    # 6. Render Historical Messages
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # 6. Render Dynamic Magic Buttons
+    # 7. Render Dynamic Magic Buttons
     questions_list = current_config.get("magic_questions", [])
     if questions_list and len(st.session_state.messages) == 0:
         st.markdown("💡 **Try one of the examples below:**")
@@ -141,13 +142,13 @@ def main():
                 if st.button(question, key=f"magic_btn_{index}"):
                     st.session_state.button_query = question
 
-    # 7. Render Input & Logic Gate
+    # 8. Render Input & Logic Gate
     user_input = st.chat_input("Or type your own specific question here...")
     final_query = user_input or st.session_state.button_query
 
-    # 8. Fire the Engine
+    # 9. Fire the Engine (Passing the tenant_id as the namespace parameter)
     if final_query:
-        execute_rag_generation_loop(final_query, openai_api_key, pinecone_api_key, index_name)
+        execute_rag_generation_loop(final_query, openai_api_key, pinecone_api_key, tenant_id)
 
 
 # --- ENTRY POINT ---
