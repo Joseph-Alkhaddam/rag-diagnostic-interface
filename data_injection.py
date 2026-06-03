@@ -11,8 +11,9 @@ from text_splitter import extract_and_chunk_pdf
 from vector_embedding import embedding_and_upsert, sanitize_document_chunks
 
 
-file_path = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\Injection Data\Building Manuals\Ontario Building Code 2024.pdf"
-index_name = "jablonsky-obc-demo"
+file_path = r""
+index_name = ""
+tenant_id = ""
 
 
 def main():

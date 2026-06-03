@@ -140,8 +140,8 @@ def unified_document_pipeline(folder_path: str, final_output_name: str) -> None:
 # --- ENTRY POINT FOR STANDALONE EXECUTION ---
 if __name__ == "__main__":
     # Define your execution parameters here so they don't clutter the logic above
-    TARGET_FOLDER = r"C:\Users\fowak\Documents\Work\AI Engineering\RAG Pipeline\Injection Data\Building Manuals"
-    OUTPUT_FILE = "Ontario Building Code 2024.pdf"  
+    TARGET_FOLDER = r""
+    OUTPUT_FILE = ""  
     
     # Execute the master pipeline
     unified_document_pipeline(TARGET_FOLDER, OUTPUT_FILE)

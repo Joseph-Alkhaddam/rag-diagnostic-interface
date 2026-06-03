@@ -39,7 +39,7 @@ def sanitize_document_chunks(raw_chunks: List[Any]) -> List[Any]:
     return clean_chunks
 
 
-def embedding_and_upsert(smart_chunks: List[Any], index_name: str, batch_size: int = 100) -> None:
+def embedding_and_upsert(smart_chunks: List[Any], index_name: str, tenant_id: str, batch_size: int = 100) -> None:
     """
     Translates text chunks into mathematical vectors and uploads them to Pinecone.
 
@@ -114,7 +114,10 @@ def embedding_and_upsert(smart_chunks: List[Any], index_name: str, batch_size: i
                 })
             
             # Execute Upsert
-            production_index.upsert(vectors=pinecone_payload)
+            production_index.upsert(
+                vectors=pinecone_payload,
+                namespace=tenant_id
+                )
             
         except Exception as e:
             print(f"[ERROR] Batch {i} to {i + len(batch)} failed: {str(e)}")

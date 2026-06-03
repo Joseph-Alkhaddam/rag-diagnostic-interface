@@ -177,7 +177,7 @@ if __name__ == "__main__":
     # Uncomment the function you wish to run and execute the file.
     # ---------------------------------------------------------
     
-    TARGET_INDEX = "jablonsky-obc-demo"
+    TARGET_INDEX = ""
     
     # 1. Inspect your infrastructure
     # list_active_indexes()
