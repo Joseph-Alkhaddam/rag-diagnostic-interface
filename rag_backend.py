@@ -13,18 +13,6 @@ from pinecone import Pinecone
 # --- THE CONFIGURATION REGISTRY ---
 # This maps an index name to its specific AI personality and parameters
 INDEX_CONFIGS = {
-    "default": {
-        "system_prompt": """
-        You are a helpful AI assistant. Answer questions based on the provided context.
-        Always cite page numbers.
-        """,
-        "model": "gpt-4o-mini",
-        "temperature": 0.1,
-        "top_k": 3,
-        "index_title": "📚 Knowledge Base",
-        "index_subheader": "Ask anything about the relevant documents",
-        "magic_questions": []
-    },
     "alexs-university-psych-notes": {
         "system_prompt": """
         You are a helpful study assistant who is educated and trained in behavioral psychology.

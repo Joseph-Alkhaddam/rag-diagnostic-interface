@@ -128,7 +128,9 @@ def main():
     target_index = query_params.get("index", "2023-kia-forte-data")
     raw_namespace = query_params.get("namespace", "__default__")
 
-    if not raw_namespace or raw_namespace.strip() in {"", "default"}:
+    if not raw_namespace or not raw_namespace.strip():
+        target_namespace = "__default__"
+    elif raw_namespace.strip() == "default":
         target_namespace = "__default__"
     else:
         target_namespace = raw_namespace.strip()
