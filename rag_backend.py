@@ -14,14 +14,16 @@ from pinecone import Pinecone
 # This maps an index name to its specific AI personality and parameters
 INDEX_CONFIGS = {
     "default": {
-        "system_prompt": """You are a helpful AI assistant. Answer questions based on the provided context.
-        Answer the user's question using the provided context. If the exact answer is missing, 
-        summarize what the context DOES say about the topic to try and help them. 
-        Always cite page numbers."
+        "system_prompt": """
+        You are a helpful AI assistant. Answer questions based on the provided context.
+        Always cite page numbers.
         """,
         "model": "gpt-4o-mini",
         "temperature": 0.1,
-        "top_k": 3
+        "top_k": 3,
+        "index_title": "📚 Knowledge Base",
+        "index_subheader": "Ask anything about the relevant documents",
+        "magic_questions": []
     },
     "alexs-university-psych-notes": {
         "system_prompt": """
@@ -33,8 +35,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "namespeace_title": "Alex's University Psych Notes Study Helper",
-        "namespeace_subheader": "Ask any relevant questions about Alex's study notes from his Psych Major",
+        "index_title": "Alex's University Psych Notes Study Helper",
+        "index_subheader": "Ask any relevant questions about Alex's study notes from his Psych Major",
         "magic_questions": 
             ["What are Nichmachean Ethics?",
              "What refinement of X-ray technology developed that allowed for structural neuroimaging, and when?",
@@ -52,8 +54,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "namespeace_title": "2023 KIA Forte Personal Assistant",
-        "namespeace_subheader": "Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and the Warranty Information.",
+        "index_title": "2023 KIA Forte Personal Assistant",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual, the Infotainment Quick Reference Guide, and the Warranty Information.",
         "magic_questions": 
             ["How often should I service my breaks during harsh weather conditions?",
              "Can I have presets for playing certain audio? If so, how do I do that?",
@@ -70,8 +72,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "namespeace_title": "LG WM6998*A Washing Machine Peronsal Assitant",
-        "namespeace_subheader": "Ask any questions relevant to the Owner's Manual.",
+        "index_title": "LG WM6998*A Washing Machine Peronsal Assitant",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual.",
         "magic_questions": 
             ["How do I clean the rubber gasket for the door?",
              "How do I make the machine use more detergent for a stronger smell?",
@@ -88,8 +90,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "namespeace_title": "LG LREN6325 Stove Peronsal Assitant",
-        "namespeace_subheader": "Ask any questions relevant to the Owner's Manual.",
+        "index_title": "LG LREN6325 Stove Peronsal Assitant",
+        "index_subheader": "Ask any questions relevant to the Owner's Manual.",
         "magic_questions": 
             ["What's the safest way to clean the stove top from oil stains?",
              "Do I need a lot of oil when using the air frying function?",
@@ -106,8 +108,8 @@ INDEX_CONFIGS = {
         "model": "gpt-4o-mini",
         "temperature": 0.1,
         "top_k": 5,
-        "namespeace_title": "Jablonsky & Partners OBC Assistant",
-        "namespeace_subheader": "Query Part 4 (Structural Design) of the Ontario Building Code instantly.",
+        "index_title": "Jablonsky & Partners OBC Assistant",
+        "index_subheader": "Query Part 4 (Structural Design) of the Ontario Building Code instantly.",
         "logo": "big_jablonsky_logo.png",
         "magic_questions": [
             "What are the live load reduction factors for multi-story columns and foundations?",
@@ -119,10 +121,11 @@ INDEX_CONFIGS = {
 
 
 def run_rag_pipeline(
-    user_query: str, 
-    openai_api_key: str, 
-    pinecone_api_key: str, 
-    tenant_id: str
+    user_query: str,
+    openai_api_key: str,
+    pinecone_api_key: str,
+    index_name: str = "demo-rags",
+    namespace_name: str = "__default__"
 ) -> str:
     """
     Executes a Retrieval-Augmented Generation (RAG) pipeline for a given query.
@@ -150,9 +153,12 @@ def run_rag_pipeline(
     # Standard processing applied for client initialization
     ai_client = OpenAI(api_key=openai_api_key)
     pc_client = Pinecone(api_key=pinecone_api_key)
-    MASTER_INDEX_NAME = "production-clients" 
-    index = pc_client.Index(MASTER_INDEX_NAME)
-    config = INDEX_CONFIGS.get(tenant_id, INDEX_CONFIGS["default"])
+                         
+    resolved_index = index_name.strip() if index_name and index_name.strip() else "demo-rags"
+    resolved_namespace = namespace_name.strip() if namespace_name and namespace_name.strip() else "__default__"
+    
+    index = pc_client.Index(resolved_index)
+    config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["default"])
     
     # Standard processing applied for vector space translation
     embedding_response = ai_client.embeddings.create(
@@ -165,7 +171,7 @@ def run_rag_pipeline(
     vector_results = index.query(
         vector=query_vector,
         top_k=config["top_k"],
-        namespace=tenant_id,
+        namespace=resolved_namespace,
         include_metadata=True
     )
     

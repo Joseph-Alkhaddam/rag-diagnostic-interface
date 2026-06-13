@@ -78,27 +78,39 @@ def initialize_session_state() -> None:
 
 # --- EXECUTION ENGINE ---
 
-def execute_rag_generation_loop(final_query: str, openai_api_key: str, pinecone_api_key: str, index_name: str) -> None:
+def execute_rag_generation_loop(
+    final_query: str,
+    openai_api_key: str,
+    pinecone_api_key: str,
+    index_name: str,
+    namespace_name: str
+) -> None:
     """
     Executes the neural search backend, processes the query, and updates chat history.
     """
-    # 1. Nullify the temporary button query state
     st.session_state.button_query = None
-    
-    # 2. Append and render user message
+
     st.session_state.messages.append({"role": "user", "content": final_query})
     with st.chat_message("user"):
         st.write(final_query)
-        
-    # 3. Execute backend and render response
+
     with st.chat_message("assistant"):
         with st.spinner("Searching through relevant documents..."):
             try:
-                response = run_rag_pipeline(final_query, openai_api_key, pinecone_api_key, index_name)
+                response = run_rag_pipeline(
+                    user_query=final_query,
+                    openai_api_key=openai_api_key,
+                    pinecone_api_key=pinecone_api_key,
+                    index_name=index_name,
+                    namespace_name=namespace_name
+                )
                 st.write(response)
-                
-                # Commit successful generation to memory
-                st.session_state.messages.append({"role": "assistant", "content": response})
+
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": response
+                })
+
             except Exception as e:
                 st.error(f"Inference Engine Exception: {str(e)}")
 
@@ -109,12 +121,13 @@ def main():
     """Main application execution loop."""
     openai_api_key, pinecone_api_key = get_credentials()
 
-    # 1. Routing: Read the 'tenant' parameter directly from the URL
+    # 1. Routing: Read the parameters directly from the URL
     query_params = st.query_params
-    tenant_id = query_params.get("tenant", "default") 
-    
-    # 2. Fetch Configuration BEFORE rendering UI
-    current_config = INDEX_CONFIGS.get(tenant_id, INDEX_CONFIGS["default"])
+
+    target_index = query_params.get("index", "default")
+    target_namespace = query_params.get("namespace", "__default__")
+
+    current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["default"])
     
     # 3. Render the locked-down Sidebar
     render_sidebar(current_config)
@@ -146,9 +159,15 @@ def main():
     user_input = st.chat_input("Or type your own specific question here...")
     final_query = user_input or st.session_state.button_query
 
-    # 9. Fire the Engine (Passing the tenant_id as the namespace parameter)
+    # 9. Fire the Engine 
     if final_query:
-        execute_rag_generation_loop(final_query, openai_api_key, pinecone_api_key, tenant_id)
+        execute_rag_generation_loop(
+            final_query=final_query,
+            openai_api_key=openai_api_key,
+            pinecone_api_key=pinecone_api_key,
+            index_name=target_index,
+            namespace_name=target_namespace
+        )
 
 
 # --- ENTRY POINT ---

@@ -39,13 +39,21 @@ def sanitize_document_chunks(raw_chunks: List[Any]) -> List[Any]:
     return clean_chunks
 
 
-def embedding_and_upsert(smart_chunks: List[Any], index_name: str, tenant_id: str, batch_size: int = 100) -> None:
+def embedding_and_upsert(
+    smart_chunks: List[Any],
+    index_name: str,
+    tenant_id: str = "__default__",
+    batch_size: int = 100
+) -> None:
     """
     Translates text chunks into mathematical vectors and uploads them to Pinecone.
 
     Authenticates with secure cloud providers, batches the sanitized document chunks 
     to respect API rate limits, requests embeddings from OpenAI, packages the vectors 
     with their corresponding metadata, and executes the upsert to Pinecone.
+    
+    If tenant_id is blank, whitespace, or None, vectors are uploaded to Pinecone's
+    default namespace: "__default__".
 
     Parameters
     ----------
@@ -70,6 +78,9 @@ def embedding_and_upsert(smart_chunks: List[Any], index_name: str, tenant_id: st
     except Exception as e:
         print(f"[ERROR] Failed to initialize cloud clients. Verify .env keys. Details: {e}")
         return
+    
+    namespace = tenant_id.strip() if tenant_id and tenant_id.strip() else "__default__"
+    print(f"[SYSTEM] Target namespace resolved to: {namespace}")
 
     # 2. Execute Data Sanitization
     clean_chunks = sanitize_document_chunks(smart_chunks)
@@ -116,7 +127,7 @@ def embedding_and_upsert(smart_chunks: List[Any], index_name: str, tenant_id: st
             # Execute Upsert
             production_index.upsert(
                 vectors=pinecone_payload,
-                namespace=tenant_id
+                namespace=namespace
                 )
             
         except Exception as e:
