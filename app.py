@@ -124,7 +124,7 @@ def main():
     # 1. Routing: Read the parameters directly from the URL
     query_params = st.query_params
 
-    target_index = query_params.get("index", "default")
+    target_index = query_params.get("index", "2023-kia-forte-data")
     target_namespace = query_params.get("namespace", "__default__")
 
     current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["default"])

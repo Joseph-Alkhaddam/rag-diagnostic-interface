@@ -120,6 +120,22 @@ INDEX_CONFIGS = {
 }
 
 
+def resolve_index(index_name: str | None) -> str:
+    """
+    Normalizes index values before connecting to Pinecone.
+    Treats missing, blank, or placeholder values as the real demo index.
+    """
+    if not index_name or not index_name.strip():
+        return "2023-kia-forte-data"
+
+    index = index_name.strip()
+
+    if index == "default":
+        return "2023-kia-forte-data"
+
+    return index
+
+    
 def resolve_namespace(namespace_name: str | None) -> str:
     """
     Normalizes namespace values before sending them to Pinecone.
@@ -140,7 +156,7 @@ def run_rag_pipeline(
     user_query: str,
     openai_api_key: str,
     pinecone_api_key: str,
-    index_name: str = "demo-rags",
+    index_name: str = "2023-kia-forte-data",
     namespace_name: str = "__default__"
 ) -> str:
     """
@@ -170,7 +186,7 @@ def run_rag_pipeline(
     ai_client = OpenAI(api_key=openai_api_key)
     pc_client = Pinecone(api_key=pinecone_api_key)
                          
-    resolved_index = index_name.strip() if index_name and index_name.strip() else "demo-rags"
+    resolved_index = resolve_index(index_name)
     resolved_namespace = resolve_namespace(namespace_name)
     
     index = pc_client.Index(resolved_index)
