@@ -120,6 +120,22 @@ INDEX_CONFIGS = {
 }
 
 
+def resolve_namespace(namespace_name: str | None) -> str:
+    """
+    Normalizes namespace values before sending them to Pinecone.
+    Pinecone's visible default namespace is '__default__', not 'default'.
+    """
+    if not namespace_name or not namespace_name.strip():
+        return "__default__"
+
+    namespace = namespace_name.strip()
+
+    if namespace == "default":
+        return "__default__"
+
+    return namespace    
+    
+    
 def run_rag_pipeline(
     user_query: str,
     openai_api_key: str,
@@ -155,7 +171,7 @@ def run_rag_pipeline(
     pc_client = Pinecone(api_key=pinecone_api_key)
                          
     resolved_index = index_name.strip() if index_name and index_name.strip() else "demo-rags"
-    resolved_namespace = namespace_name.strip() if namespace_name and namespace_name.strip() else "__default__"
+    resolved_namespace = resolve_namespace(namespace_name)
     
     index = pc_client.Index(resolved_index)
     config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["default"])
