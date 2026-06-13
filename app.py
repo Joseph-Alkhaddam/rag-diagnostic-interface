@@ -28,7 +28,6 @@ def get_credentials() -> tuple:
     load_dotenv()
     return os.getenv("OPENAI_API_KEY"), os.getenv("PINECONE_API_KEY")
 
-@st.cache_data
 # --- UI & STATE COMPONENTS ---
 
 def render_sidebar(config: dict) -> str:
