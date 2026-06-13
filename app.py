@@ -138,7 +138,7 @@ def main():
     st.caption(f"DEBUG target_index: {target_index}")
     st.caption(f"DEBUG target_namespace: {target_namespace}")
 
-    current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["default"])
+    current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["2023-kia-forte-data"])
     
     # 3. Render the locked-down Sidebar
     render_sidebar(current_config)
