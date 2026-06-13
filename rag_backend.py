@@ -195,6 +195,11 @@ def run_rag_pipeline(
     print("DEBUG resolved_index:", resolved_index)
     print("DEBUG resolved_namespace:", resolved_namespace)
     
+    if resolved_namespace == "default":
+        resolved_namespace = "__default__"
+    
+    assert resolved_namespace != "default", "Namespace normalization failed"
+    
     # Standard processing applied for semantic retrieval
     vector_results = index.query(
         vector=query_vector,
