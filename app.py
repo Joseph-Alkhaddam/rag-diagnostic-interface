@@ -123,9 +123,15 @@ def main():
 
     # 1. Routing: Read the parameters directly from the URL
     query_params = st.query_params
+    st.write("DEBUG raw query params:", dict(st.query_params))
 
     target_index = query_params.get("index", "2023-kia-forte-data")
-    target_namespace = query_params.get("namespace", "__default__")
+    raw_namespace = query_params.get("namespace", "__default__")
+
+    if not raw_namespace or raw_namespace.strip() in {"", "default"}:
+        target_namespace = "__default__"
+    else:
+        target_namespace = raw_namespace.strip()
     
     st.caption(f"DEBUG target_index: {target_index}")
     st.caption(f"DEBUG target_namespace: {target_namespace}")
