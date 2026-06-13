@@ -127,17 +127,19 @@ def resolve_index(index_name: str | None) -> str:
 def resolve_namespace(namespace_name: str | None) -> str:
     """
     Normalizes namespace values before sending them to Pinecone.
-    Pinecone's visible default namespace is '__default__', not 'default'.
+
+    For Pinecone SDK/API versions prior to 2025-04, the default namespace
+    should be sent as an empty string: "".
     """
     if not namespace_name or not namespace_name.strip():
-        return "__default__"
+        return ""
 
     namespace = namespace_name.strip()
 
-    if namespace == "default":
-        return "__default__"
+    if namespace in {"default", "__default__"}:
+        return ""
 
-    return namespace    
+    return namespace   
     
     
 def run_rag_pipeline(
@@ -145,7 +147,7 @@ def run_rag_pipeline(
     openai_api_key: str,
     pinecone_api_key: str,
     index_name: str = "2023-kia-forte-data",
-    namespace_name: str = "__default__"
+    namespace_name: str = ""
 ) -> str:
     """
     Executes a Retrieval-Augmented Generation (RAG) pipeline for a given query.
@@ -178,10 +180,10 @@ def run_rag_pipeline(
     resolved_namespace = resolve_namespace(namespace_name)
     
     if resolved_namespace == "default":
-        resolved_namespace = "__default__"
+        resolved_namespace = ""
     
     index = pc_client.Index(resolved_index)
-    config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["default"])
+    config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["2023-kia-forte-data"])
     
     # Standard processing applied for vector space translation
     embedding_response = ai_client.embeddings.create(
@@ -196,7 +198,7 @@ def run_rag_pipeline(
     print("DEBUG resolved_namespace:", resolved_namespace)
     
     if resolved_namespace == "default":
-        resolved_namespace = "__default__"
+        resolved_namespace = ""
     
     assert resolved_namespace != "default", "Namespace normalization failed"
     
