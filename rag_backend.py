@@ -189,6 +189,9 @@ def run_rag_pipeline(
     resolved_index = resolve_index(index_name)
     resolved_namespace = resolve_namespace(namespace_name)
     
+    if resolved_namespace == "default":
+        resolved_namespace = "__default__"
+    
     index = pc_client.Index(resolved_index)
     config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["default"])
     
@@ -198,6 +201,11 @@ def run_rag_pipeline(
         model="text-embedding-3-small"
     )
     query_vector = embedding_response.data[0].embedding
+    
+    print("DEBUG index_name raw:", index_name)
+    print("DEBUG namespace_name raw:", namespace_name)
+    print("DEBUG resolved_index:", resolved_index)
+    print("DEBUG resolved_namespace:", resolved_namespace)
     
     # Standard processing applied for semantic retrieval
     vector_results = index.query(

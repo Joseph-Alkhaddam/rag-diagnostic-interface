@@ -126,6 +126,9 @@ def main():
 
     target_index = query_params.get("index", "2023-kia-forte-data")
     target_namespace = query_params.get("namespace", "__default__")
+    
+    st.caption(f"DEBUG target_index: {target_index}")
+    st.caption(f"DEBUG target_namespace: {target_namespace}")
 
     current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["default"])
     
