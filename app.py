@@ -9,15 +9,10 @@ RAG frontend
 
 import streamlit as st
 import os
-import inspect
 from dotenv import load_dotenv
-from pinecone import Pinecone
 from rag_backend import run_rag_pipeline, INDEX_CONFIGS 
-import rag_backend
 
 # --- CREDENTIALS & DATA FETCHING ---
-
-APP_BUILD_ID = "namespace-debug-2026-06-13-v3"
 
 def get_credentials() -> tuple:
     """Retrieves API keys from Streamlit Cloud Secrets or local .env file."""
@@ -34,16 +29,6 @@ def get_credentials() -> tuple:
     return os.getenv("OPENAI_API_KEY"), os.getenv("PINECONE_API_KEY")
 
 @st.cache_data
-def get_available_indexes(pc_key: str) -> list:
-    """Fetches the list of active indexes from the Pinecone database."""
-    try:
-        pc = Pinecone(api_key=pc_key)
-        return [index.name for index in pc.list_indexes()]
-    except Exception as e:
-        print(type(e))
-        return ["2023-kia-forte-data"] # Fallback if API fails
-
-
 # --- UI & STATE COMPONENTS ---
 
 def render_sidebar(config: dict) -> str:
@@ -123,16 +108,6 @@ def execute_rag_generation_loop(
 
 def main():
     """Main application execution loop."""
-    
-    with st.expander("DEBUG deployed app.py source section"):
-        st.code(inspect.getsource(main), language="python")
-
-    with st.expander("DEBUG deployed backend resolver"):
-        st.code(inspect.getsource(rag_backend.resolve_namespace), language="python")
-    
-    with st.expander("DEBUG deployed RAG pipeline"):
-        st.code(inspect.getsource(rag_backend.run_rag_pipeline), language="python")
-    
     openai_api_key, pinecone_api_key = get_credentials()
 
     # 1. Routing: Read the parameters directly from the URL
@@ -147,15 +122,8 @@ def main():
         target_namespace = ""
     else:
         target_namespace = raw_namespace.strip()
-        
 
-    st.caption(f"APP_BUILD_ID: {APP_BUILD_ID}")
-    st.write("DEBUG raw query params:", dict(st.query_params))
-    st.caption(f"DEBUG target_index repr: {target_index}")
-    st.caption(f"DEBUG raw_namespace repr: {repr(raw_namespace)}")
-    st.caption(f"DEBUG target_namespace repr: {repr(target_namespace)}")
-
-    current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["2023-kia-forte-data"])
+    current_config = INDEX_CONFIGS.get(target_index, INDEX_CONFIGS["default"])
     
     # 3. Render the locked-down Sidebar
     render_sidebar(current_config)

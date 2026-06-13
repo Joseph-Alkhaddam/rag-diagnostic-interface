@@ -13,6 +13,19 @@ from pinecone import Pinecone
 # --- THE CONFIGURATION REGISTRY ---
 # This maps an index name to its specific AI personality and parameters
 INDEX_CONFIGS = {
+    "default": {
+    "system_prompt": """
+    You are a helpful AI assistant. Answer questions based on the provided context.
+    If the exact answer is missing, summarize what the context does say.
+    Always cite page numbers.
+    """,
+    "model": "gpt-4o-mini",
+    "temperature": 0.1,
+    "top_k": 3,
+    "index_title": "📚 Knowledge Base",
+    "index_subheader": "Ask anything about the relevant documents",
+    "magic_questions": [],
+},
     "alexs-university-psych-notes": {
         "system_prompt": """
         You are a helpful study assistant who is educated and trained in behavioral psychology.
@@ -98,7 +111,7 @@ INDEX_CONFIGS = {
         "top_k": 5,
         "index_title": "Jablonsky & Partners OBC Assistant",
         "index_subheader": "Query Part 4 (Structural Design) of the Ontario Building Code instantly.",
-        "logo": "big_jablonsky_logo.png",
+        "logo_path": "big_jablonsky_logo.png",
         "magic_questions": [
             "What are the live load reduction factors for multi-story columns and foundations?",
             "What are the specified load combinations for Ultimate Limit States (ULS) under wind and snow?",
@@ -178,12 +191,9 @@ def run_rag_pipeline(
                          
     resolved_index = resolve_index(index_name)
     resolved_namespace = resolve_namespace(namespace_name)
-    
-    if resolved_namespace == "default":
-        resolved_namespace = ""
-    
+
     index = pc_client.Index(resolved_index)
-    config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["2023-kia-forte-data"])
+    config = INDEX_CONFIGS.get(resolved_index, INDEX_CONFIGS["default"])
     
     # Standard processing applied for vector space translation
     embedding_response = ai_client.embeddings.create(
@@ -191,16 +201,6 @@ def run_rag_pipeline(
         model="text-embedding-3-small"
     )
     query_vector = embedding_response.data[0].embedding
-    
-    print("DEBUG index_name raw:", index_name)
-    print("DEBUG namespace_name raw:", namespace_name)
-    print("DEBUG resolved_index:", resolved_index)
-    print("DEBUG resolved_namespace:", resolved_namespace)
-    
-    if resolved_namespace == "default":
-        resolved_namespace = ""
-    
-    assert resolved_namespace != "default", "Namespace normalization failed"
     
     # Standard processing applied for semantic retrieval
     vector_results = index.query(
